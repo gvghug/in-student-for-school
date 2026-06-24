@@ -6,6 +6,44 @@
 <title>帐薄管理--添加</title>
 <link href="../css/style.css" rel="stylesheet" type="text/css">
 <script language="JavaScript" type="text/JavaScript" src="../js/common.js"></script>
+<script language="JavaScript" type="text/JavaScript">
+    function saveRecord() {
+        var type = document.querySelector('select.inp001').value;
+        var parentItem = document.querySelectorAll('select.inp001')[1].value;
+        var subItem = document.querySelectorAll('select.inp001')[2].value;
+        var date = document.querySelector('input.inp001').value;
+        var member = document.querySelectorAll('select.inp001')[3].value;
+        var amount = document.querySelectorAll('input.inp001')[1].value;
+        var remark = document.querySelector('textarea.inp002').value;
+
+        if (!date) {
+            alert('请输入收支日期');
+            return false;
+        }
+        if (!amount) {
+            alert('请输入收支金额');
+            return false;
+        }
+
+        var record = {
+            type: type,
+            project: '【' + parentItem + '】-' + subItem,
+            date: date,
+            member: member,
+            amount: parseFloat(amount).toFixed(2),
+            remark: remark || '&nbsp;'
+        };
+
+        var stored = localStorage.getItem('accountRecords');
+        var records = stored ? JSON.parse(stored) : [];
+        records.unshift(record);
+        localStorage.setItem('accountRecords', JSON.stringify(records));
+
+        alert('添加成功！');
+        window.location.href = 'list.html';
+        return true;
+    }
+</script>
 </head>
 
 <body leftmargin="0" topmargin="0" onLoad="MM_preloadImages('../images/login_10.gif','../images/login_12.gif','../images/login_09.gif','../images/login_11.gif')">
@@ -83,7 +121,7 @@
       <table width="98%" border="0" cellpadding="0" cellspacing="0" class="bor001">
         <tr>
           <td width="22%" height="40" align="center" >
-          <a href="list.html" target="mainframe" onMouseOver="MM_swapImage('Image1','','../images/index_12_1.gif',1)" onMouseOut="MM_swapImgRestore()" onMouseDown="MM_swapImage('Image1','','../images/index_12_2.gif',1)" onMouseUp="MM_swapImage('Image1','','../images/index_12_1.gif',1)"><img src="../images/index_12_0.gif" name="Image1" width="75" height="24" border="0" id="Image1"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="javascript:void(0)" onclick="saveRecord()" onMouseOver="MM_swapImage('Image1','','../images/index_12_1.gif',1)" onMouseOut="MM_swapImgRestore()" onMouseDown="MM_swapImage('Image1','','../images/index_12_2.gif',1)" onMouseUp="MM_swapImage('Image1','','../images/index_12_1.gif',1)"><img src="../images/index_12_0.gif" name="Image1" width="75" height="24" border="0" id="Image1"></a>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="list.html" target="mainframe" onMouseOver="MM_swapImage('Image2','','../images/login_09.gif',1)" onMouseOut="MM_swapImgRestore()" onMouseDown="MM_swapImage('Image2','','../images/login_11.gif',1)" onMouseUp="MM_swapImage('Image2','','../images/login_09.gif',1)"><img src="../images/login_07.gif" name="Image2" width="75" height="24" border="0" id="Image2"></a></td>
           <td width="78%" align="right">&nbsp;          </td>
         </tr>

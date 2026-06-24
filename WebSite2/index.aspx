@@ -25,7 +25,7 @@
                       <tr>
                         <td height="433" align="center" valign="top" background="images/index_03.gif" class="bg02"><table width="152"  border="0" cellpadding="0" cellspacing="0" class="mar005">
                           <tr>
-                            <td height="41" align="left" background="images/index_09.gif"  id="td1"><a href="account/list.html" target="mainframe" onClick="change1(document.all.td1);change2(document.all.a1);"  id="a1"  class="tex001">
+                            <td height="41" align="left" background="images/index_09.gif"  id="td1"><a href="account/list.aspx" target="mainframe" onClick="change1(document.all.td1);change2(document.all.a1);"  id="a1"  class="tex001">
                               <div class="mar007">账簿管理</div></a></td>
                           </tr>
                           <tr>
@@ -39,7 +39,7 @@
                             <td height="20">&nbsp;</td>
                           </tr>
                           <tr>
-                            <td height="41" background="images/index_06.gif" align="left"id="td3"><a href="item/list.html" target="mainframe" class="tex002"  id="a3" onClick="change1(document.all.td3);change2(document.all.a3);">
+                            <td height="41" background="images/index_06.gif" align="left"id="td3"><a href="item/list.aspx" target="mainframe" class="tex002"  id="a3" onClick="change1(document.all.td3);change2(document.all.a3);">
                               <div class="mar008">收支项目管理</div></a></td>
                           </tr>
                           <tr>
@@ -97,7 +97,7 @@
                         <td><img src="images/index_04.gif" width="21" height="19"></td>
                       </tr>
                       <tr>
-                        <td height="501" valign="top" align="right"><iframe  name="mainframe" src="account/list.html" width="98%" height="500px" frameborder="0" scrolling="no"></iframe></td>
+                        <td height="501" valign="top" align="right"><iframe  name="mainframe" src="account/list.aspx" width="98%" height="500px" frameborder="0" scrolling="no"></iframe></td>
                       </tr>
                     </table></td>
                   </tr>
