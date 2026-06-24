@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where iisexpress *)",
+      "Read(//c/Program Files/IIS Express/**)",
+      "Read(//c/Program Files \\(x86\\)/IIS Express/**)",
+      "Read(//c/Windows/Microsoft.NET/Framework64/v4.0.30319/**)",
+      "Bash(\"/c/Program Files/IIS Express/iisexpress.exe\" /config:\"D:/ASP.NET/实训/.vs/实训/config/applicationhost.config\" /site:WebSite2 /apppool:Clr4IntegratedAppPool)",
+      "Bash(curl -s http://localhost:12776/login.aspx)",
+      "Bash(curl -s http://localhost:12776/index.aspx)",
+      "Bash(curl -s http://localhost:12776/user/list.aspx)",
+      "Bash(curl -s -X POST http://localhost:12776/login.aspx -d \"__VIEWSTATE=sEVQwsoFA%2BsgpDn8%2BNpzmQJih10ymQzr%2BvU1NtbwTmhRYjyEzkCJ53kMC9Uua5qnjZLPwyUeIZ%2BE07vuXhjCosUI4nmcjyxyLhr9KwT1EhP4RCrZk39CqE%2FXcTXxfFH7fsV6I1RxxNq%2FdD2BHSniAmkDmuN4iyCPxbpIcEEk1Ns%3D&__VIEWSTATEGENERATOR=C2EE9ABB&__EVENTVALIDATION=58D8qFO%2F24kv8HGlKqX0ha660TeP9JzAl3tGxWGd0Nx8qeLD%2BX4GhnzKkvG4xH1fzJYwa9Q1Tjw2wr7obqRdepgQirun%2FxVTlKq6TVrGJlOX6p9zwq9XQoEJRQFFqNn8rw9hJJ%2FQeyWgYaJWuxKJ1NHkM4ixB9iZqWwz%2B6G0cJBhSLigEUp%2FCfSoZTK4M64u&Text1=test&Text2=test&but1.x=1&but1.y=1\")",
+      "Bash(mv \"D:/ASP.NET/实训/WebSite2/index.html\" \"D:/ASP.NET/实训/WebSite2/index.html.bak\")",
+      "Bash(mv \"D:/ASP.NET/实训/WebSite2/login.html\" \"D:/ASP.NET/实训/WebSite2/login.html.bak\")",
+      "Bash(sed -i '67s|onMouseOver=\"MM_swapImage|OnClick=\"btn_save_Click\" onMouseOver=\"MM_swapImage|' \"D:/ASP.NET/实训/WebSite2/user/add.aspx\")",
+      "Bash(sed -i '70s|runat=\"server\" ImageUrl|runat=\"server\" OnClick=\"btn_cancel_Click\" ImageUrl|' \"D:/ASP.NET/实训/WebSite2/user/add.aspx\")",
+      "Bash(xxd)",
+      "Bash(grep -oP '\\(?<=<td>\\).{4,10}\\(?=</td>\\)')",
+      "Bash(pip list *)",
+      "Bash(antiword *)",
+      "Bash(powershell *)",
+      "Bash(pip install *)",
+      "Bash(cscript *)"
+    ]
+  }
+}

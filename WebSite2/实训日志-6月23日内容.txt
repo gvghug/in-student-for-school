@@ -1,0 +1,49 @@
+========================================
+实训日志 - 2026年6月23日（第17周 星期二）
+========================================
+
+【实训主要内容】（填入模板"实训主要内容"栏）
+
+今日完成家庭财务管理系统的项目环境搭建与核心功能模块开发，具体包括以下工作：
+
+1. 项目框架搭建：使用 Visual Studio 创建 ASP.NET WebForms 项目，配置目标框架 .NET Framework 4.7.2，在 Web.config 中配置 SQL Server 数据库连接字符串（FamilyFinanceSystem 数据库，Windows 集成身份验证）。
+
+2. 登录模块开发：完成 login.aspx 前端页面设计（table 布局+ImageButton 控件）及 login.aspx.cs 后端验证逻辑，通过 SqlCommand 参数化查询 familyInformation 表验证用户名密码，登录成功后将用户名存入 Session["userName"]，使用 Response.Redirect 跳转至主页面 index.aspx。
+
+3. 主页面布局设计：完成 index.aspx 主页面开发，采用 table+iframe 经典布局——左侧 180px 导航菜单区，右侧自适应内容展示区。导航菜单包含账簿管理、家庭成员管理、收支项目管理、报表统计、退出系统五个功能入口。
+
+4. 导航交互效果：编写 JavaScript 函数 init1/init2/change1/change2 实现左侧菜单项点击时背景图片和文字样式的切换高亮效果。
+
+5. 家庭成员管理 CRUD 模块：
+   - user/list.aspx — 使用 GridView+SqlDataSource 绑定数据，实现全选批量删除、单条编辑/删除功能
+   - user/add.aspx — 表单输入（用户编号、用户名、真实姓名、密码、确认密码），密码一致性校验后 INSERT 入库
+   - user/edit_new.aspx — 通过 Request.QueryString["systemId"] 传参，LoadData 方法加载现有数据，支持 UPDATE 更新
+
+
+【实训主要步骤】（填入模板"实训主要步骤"栏）
+
+1. 创建 ASP.NET WebForms 项目，配置 .NET Framework 4.7.2 目标框架
+2. 在 Web.config 中配置 connectionStrings 节点，添加 FMSDB 连接字符串
+3. 设计 login.aspx 登录界面，编写 btn_login_Click 服务端验证方法
+4. 设计 index.aspx 主界面，嵌套 table 实现左右分栏，iframe 加载子页
+5. 编写 JavaScript 四个函数管理导航菜单状态
+6. 开发 user/list.aspx，配置 GridView 手动列模板，绑定 SqlDataSource
+7. 开发 user/add.aspx，五个 TextBox 控件 + ImageButton 提交按钮
+8. 开发 user/edit_new.aspx，QueryString 传参 + 数据库回填表单
+
+
+【实训总结】（填入模板"实训总结"栏，包含问题+解决方案+明日计划）
+
+遇到问题：在实现"退出系统"按钮时，原代码使用 javascript:window.close() 尝试关闭窗口，但浏览器安全策略限制 window.close() 只能关闭由 JavaScript 打开的窗口，导致该按钮点击后无任何反应。
+
+解决方案：将 index.aspx 第56行 a 标签的 href 属性从 javascript:window.close() 修改为 login.aspx。由于该链接未设置 target="mainframe" 属性，点击后会直接在当前窗口跳转回登录页面，实现了退出系统的预期行为。
+
+明日计划：明天（6月25日）准备继续完成账簿管理模块和收支项目管理模块的页面开发与后端逻辑编写，实现收支分类的增删改查功能。
+
+
+【建议截图】
+1. login.aspx 登录页面运行截图
+2. index.aspx 主页面整体布局截图（含左侧导航栏）
+3. user/list.aspx 家庭成员列表页截图
+4. 退出系统按钮修改前后代码对比截图
+5. 项目文件结构截图（解决方案资源管理器）

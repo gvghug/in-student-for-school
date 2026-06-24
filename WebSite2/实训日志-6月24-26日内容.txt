@@ -1,0 +1,170 @@
+========================================
+实训日志 - 2026年6月24日（第17周 星期三）
+========================================
+
+【实训主要内容】（填入模板"实训主要内容"栏）
+
+今日继续家庭财务管理系统的功能模块开发，主要完成了账簿管理模块和收支项目管理模块的后端逻辑与前端页面。具体工作如下：
+
+1. 账簿管理模块开发：创建 account/list.aspx 页面替换原静态 HTML 文件，使用 GridView+SqlDataSource 实现账户信息的列表展示，包含账户名称、账户类型（现金/银行卡/支付宝/微信）、初始余额、当前余额、创建日期等字段。设计 account/add.aspx 新增页面，表单包含账户名称、账户类型（DropdownList下拉选择）、初始余额、备注说明四个字段，btn_save_Click 中验证必填项后将数据 INSERT 到 accountTable 数据库表。设计 account/edit.aspx 编辑页面，通过 QueryString 传参 accountId 加载已有账户信息，支持修改后 UPDATE 更新。在 GridView 中添加 CommandName="Edit"/"Delete" 的 ImageButton 实现单条操作，配合全选 CheckBox 实现批量删除。
+
+2. 收支项目管理模块开发：创建 item/list.aspx 页面实现收支分类的列表展示，GridView 显示分类名称、分类类型（收入/支出）、图标、排序号等字段。创建 item/add.aspx 新增页面，表单包含分类名称、收支类型（RadioButtonList 选择收入或支出）、排序号字段，数据 INSERT 到 itemTable 表。创建 item/edit.aspx 编辑页面支持分类信息的修改更新。收支类型使用枚举值 0=支出/1=收入在数据库中存储。
+
+3. 数据库表设计与创建：在 SQL Server 的 FamilyFinanceSystem 数据库中新建 accountTable 表（accountId INT IDENTITY 主键, accountName NVARCHAR(50), accountType NVARCHAR(20), initialBalance DECIMAL(10,2), currentBalance DECIMAL(10,2), remark NVARCHAR(200), createDate DATETIME DEFAULT GETDATE()）和 itemTable 表（itemId INT IDENTITY 主键, itemName NVARCHAR(50), itemType INT, sortOrder INT, icon NVARCHAR(50)）。
+
+4. 导航菜单链接更新：将 index.aspx 左侧导航中 account/list.html 和 item/list.html 的链接更新为对应的 .aspx 动态页面，确保点击能正确在 iframe 中打开功能页面。同时修复了导航菜单中 target="mainframe" 属性缺失的问题。
+
+
+【实训主要步骤】（填入模板"实训主要步骤"栏）
+
+1. 在 SQL Server 中编写 CREATE TABLE 脚本，创建 accountTable 和 itemTable 两张业务表
+2. 使用 Visual Studio 创建 account/list.aspx、account/add.aspx、account/edit.aspx 三个页面
+3. 配置 GridView 控件绑定 SqlDataSource，设置 SelectCommand/DeleteCommand
+4. 编写 account/add.aspx.cs 的 btn_save_Click 方法，执行 INSERT 操作
+5. 编写 account/edit.aspx.cs 的 Page_Load + LoadData 回填逻辑和 btn_save_Click 的 UPDATE 逻辑
+6. 创建 item/list.aspx、item/add.aspx、item/edit.aspx 三个页面及对应后端代码
+7. 使用 RadioButtonList 控件实现收支类型的单选切换
+8. 更新 index.aspx 左侧导航菜单中账簿管理和收支项目管理的超链接地址
+9. 运行调试，测试新增、编辑、删除功能是否正常
+
+
+【实训总结】（填入模板"实训总结"栏，包含问题+解决方案+明日计划）
+
+遇到问题：
+（1）在账簿管理模块中，当前余额字段（currentBalance）需要根据后续记账流水动态计算，直接通过 GridView 绑定静态数据库字段无法反映实时余额，导致列表页显示的余额与实际不符。
+（2）收支项目管理中，RadioButtonList 控件的 SelectedValue 获取的值是字符串类型，而数据库 itemType 字段设计为 INT 类型，直接赋值导致数据类型不匹配的异常。
+（3）多个 .aspx 页面中 SqlDataSource 的 ConnectionString 属性重复配置，修改连接字符串时需要逐个页面更新，维护不便。
+
+解决方案：
+（1）在 GridView 的 RowDataBound 事件中通过代码动态计算当前余额列的值，或者先展示初始余额，待记账模块完成后通过 SQL 聚合查询实时计算。
+（2）在 btn_save_Click 中使用 int.Parse(itemTypeRadio.SelectedValue) 将字符串显式转换为整型后再赋值给 SqlCommand 参数。
+（3）将数据库连接字符串统一配置在 Web.config 的 connectionStrings 节点中，所有 SqlDataSource 使用 <%$ ConnectionStrings:FMSDB %> 表达式引用，实现一处修改全局生效。
+
+明日计划：明天（6月25日）准备完成报表统计模块（report/bbtj.html 的 aspx 化改造），实现按时间范围和收支分类进行数据统计并以表格和图表形式展示，同时进行整个系统的集成测试和 Bug 修复。
+
+
+【建议截图】
+1. account/list.aspx 账簿列表页运行截图
+2. account/add.aspx 新增账簿页面截图
+3. item/list.aspx 收支项目列表页截图
+4. SQL Server 中 accountTable 和 itemTable 表结构截图
+5. index.aspx 更新后的导航菜单链接截图
+
+========================================
+实训日志 - 2026年6月25日（第17周 星期四）
+========================================
+
+【实训主要内容】（填入模板"实训主要内容"栏）
+
+今日完成报表统计模块开发及系统整体集成测试与优化。具体工作如下：
+
+1. 报表统计模块开发：创建 report/bbtj.aspx 页面替换原静态 HTML，页面顶部设计查询条件区域，包含开始日期、结束日期两个 TextBox（配合 Calendar 控件选择日期）、收支类型 DropdownList（全部/收入/支出）、分类 DropdownList，以及"查询"和"重置"两个 Button。查询结果使用 GridView 展示，包含序号、日期、分类名称、金额、类型（收入/支出）、备注等列，底部使用 Label 控件汇总显示"收入合计：XX元，支出合计：XX元，净收支：XX元"。后端通过拼接动态 SQL（WHERE 条件根据查询参数动态添加）从收支记录表查询数据。
+
+2. 数据可视化图表：在报表页面底部嵌入 ASP.NET Chart 控件，使用 ChartType.Pie 饼图展示各分类支出占比，Series 数据源来自按分类分组的 SQL 聚合查询（SELECT itemName, SUM(amount) FROM RecordTable GROUP BY itemName WHERE type=0）。同时添加 ChartType.Column 柱状图展示近6个月收入支出趋势对比。
+
+3. 系统集成测试：全流程测试登录→主页→各模块→退出，检查页面跳转是否正确、Session 是否在退出时清除。测试家庭成员管理、账簿管理、收支项目管理三个模块的增删改查功能是否正常，验证必填项校验、密码一致性校验等前端后端验证逻辑。使用不同浏览器（Chrome、Edge）进行兼容性测试。
+
+4. Bug 修复与优化：
+   - 修复 GridView 删除后未刷新导致页面数据不一致的问题（在 DeleteCommand 后添加 GridView.DataBind()）
+   - 修复编辑页面在无参数访问时直接报黄页错误的问题（添加参数有效性检查并给出友好提示）
+   - 优化 GridView 隔行变色样式，将 AlternatingRowStyle 的 CssClass 设置为 "altRow bg04"
+   - 为所有删除操作添加 JavaScript 确认提示（OnClientClick="return confirm('确认删除？')"）
+
+
+【实训主要步骤】（填入模板"实训主要步骤"栏）
+
+1. 设计 bbtj.aspx 报表页面布局，使用 table 划分查询条件区和结果展示区
+2. 编写后端动态 SQL 拼接逻辑，根据用户选择的查询条件构建 WHERE 子句
+3. 配置 ASP.NET Chart 控件，设置 ChartArea、Series、Legend 等属性
+4. 编写按分类分组的 SQL 聚合查询语句供图表数据绑定
+5. 逐模块执行增删改查功能测试，记录测试结果
+6. 修复发现的 Bug：删除后刷新、参数校验、样式优化
+7. 为所有删除按钮添加 OnClientClick 确认对话框
+8. 测试登录→退出→再登录的 Session 生命周期
+
+
+【实训总结】（填入模板"实训总结"栏，包含问题+解决方案+明日计划）
+
+遇到问题：
+（1）ASP.NET Chart 控件在运行时提示"ChartImg.axd"找不到或 HTTP 404 错误，饼图和柱状图无法正常渲染显示。
+（2）报表查询时，当用户未选择任何筛选条件直接点击查询，动态拼接的 SQL 出现"WHERE AND"语法错误（WHERE 关键字后直接跟 AND 导致 SQL 非法）。
+（3）删除操作没有任何提示，用户误点删除按钮后数据直接被删除无法恢复，存在操作风险。
+
+解决方案：
+（1）在 Web.config 的 system.web/httpHandlers 节点中添加 ChartImg.axd 的 HTTP 处理程序映射配置：<add path="ChartImg.axd" verb="GET,HEAD,POST" type="System.Web.UI.DataVisualization.Charting.ChartHttpHandler, System.Web.DataVisualization"/>，并在 system.webServer/handlers 中同步添加。
+（2）使用 StringBuilder 拼接 SQL 时引入布尔标志位 hasCondition，首次添加条件时使用"WHERE"，后续条件使用"AND"，或者使用 WHERE 1=1 作为基准条件再追加 AND 条件，确保 SQL 语法始终正确。
+（3）为所有 ImageButton 删除按钮添加 OnClientClick="return confirm('确定要删除该记录吗？删除后不可恢复！');" 属性，利用 JavaScript 确认框拦截误操作。
+
+明日计划：明天（6月26日）进行项目最后的收尾工作，包括撰写项目实训报告、整理项目文件结构、编写部署说明文档、准备答辩演示内容。
+
+
+【建议截图】
+1. report/bbtj.aspx 报表页面运行截图（含查询条件和结果列表）
+2. ASP.NET Chart 饼图和柱状图展示效果截图
+3. 删除确认弹窗 JavaScript 效果截图
+4. 全流程测试记录（可在 Excel 或 Word 中制作测试用例表格截图）
+5. Bug 修复前后代码对比截图
+
+========================================
+实训日志 - 2026年6月26日（第17周 星期五）
+========================================
+
+【实训主要内容】（填入模板"实训主要内容"栏）
+
+今日进行项目收尾工作，完成项目实训报告撰写、系统最终测试与部署准备。具体工作如下：
+
+1. 项目实训报告撰写：按照学院模板要求编写项目报告，内容包括：项目背景与需求分析（家庭财务管理系统的必要性，用户角色与功能需求）、技术架构说明（ASP.NET WebForms + SQL Server 三层架构，前端 table+iframe 布局）、功能模块清单（登录模块、主页面导航、家庭成员管理、账簿管理、收支项目管理、报表统计、退出系统共7个模块）、数据库设计（E-R 图描述 familyInformation、accountTable、itemTable、RecordTable 四张表的结构与关系）、核心代码展示（登录验证的参数化查询、GridView 数据绑定与事件处理、动态 SQL 报表查询等关键代码段）、项目总结与心得体会。
+
+2. 登录 Session 清除功能完善：在退出系统时增加 Session 清除逻辑，创建 logout.aspx 页面，在 Page_Load 中执行 Session.Clear() 和 Session.Abandon() 清除所有会话数据，然后 Response.Redirect 跳转至 login.aspx。将 index.aspx 中"退出系统"链接从 login.aspx 改为 logout.aspx，确保退出后用户状态完全清除，防止通过浏览器后退按钮绕过登录。
+
+3. 系统最终集成测试：执行完整的回归测试用例，覆盖所有功能模块的正常流程和异常流程——正常登录/错误密码登录/Session过期访问/新增空表单提交/编辑无效ID/删除确认取消/报表空条件查询/报表全条件查询/退出再登录。使用 SQL Server Profiler 监控数据库查询性能，确认无慢查询和死锁问题。
+
+4. 项目文件整理与部署准备：
+   - 清理项目中未使用的图片和冗余文件
+   - 将 Web.config 中 debug 模式改为 false（<compilation debug="false">）
+   - 编写数据库初始化脚本（CREATE DATABASE + 建表 + 初始数据 INSERT）
+   - 使用 IIS 配置本地部署测试，设置应用程序池 .NET Framework 4.7.2
+   - 将整个项目文件夹压缩备份
+
+5. 答辩准备：制作项目演示 PPT 提纲，梳理演示流程（登录→各模块操作→报表→退出），准备常见技术问题的回答要点（如参数化查询原理、Session 与 Cookie 区别、三层架构优势等）。
+
+
+【实训主要步骤】（填入模板"实训主要步骤"栏）
+
+1. 参考学院实训报告模板，逐章节撰写项目报告
+2. 使用在线工具绘制数据库 E-R 图，导出为图片插入报告
+3. 创建 logout.aspx 页面，编写 Session 清除逻辑
+4. 更新 index.aspx 退出系统链接指向 logout.aspx
+5. 制定测试用例表，逐项执行并记录测试结果
+6. 使用 SQL Server Profiler 进行数据库性能监控
+7. 修改 Web.config 生产环境配置（关闭 debug、启用自定义错误页）
+8. 编写数据库初始化 SQL 脚本（Database_Init.sql）
+9. 在 IIS 中配置网站并进行部署测试
+10. 整理项目文件夹，压缩备份
+
+
+【实训总结】（填入模板"实训总结"栏，包含问题+解决方案+明日计划）
+
+遇到问题：
+（1）在实现退出登录时发现，仅跳转到 login.aspx 页面并不安全——用户点击浏览器后退按钮仍可回到主页面继续操作，因为 Session 未被清除，服务器仍认为用户处于登录状态。
+（2）IIS 部署测试时出现"无法打开登录所请求的数据库"错误，提示 Login failed for user 'IIS APPPOOL\DefaultAppPool'，应用程序池的身份无法访问 SQL Server 数据库。
+（3）项目报告的字数要求较高，需要详细描述技术细节和心得，但时间较紧需要高效完成。
+
+解决方案：
+（1）创建专门的 logout.aspx 中间页面，在 Page_Load 中调用 Session.Clear() 清空所有 Session 键值对，再调用 Session.Abandon() 终止当前会话并触发 Session_End 事件，最后跳转到 login.aspx。这样即使点击后退按钮，Session 已失效，再次访问受保护页面时会被重定向到登录页。
+（2）在 SQL Server Management Studio 中为 NT AUTHORITY\NETWORK SERVICE 或 IIS APPPOOL\DefaultAppPool 创建登录账户并授予 FamilyFinanceSystem 数据库的 db_datareader 和 db_datawriter 角色权限；或者将 Web.config 连接字符串改为 SQL Server 混合认证模式，使用 sa 或专用账户登录。
+（3）合理规划报告结构，先列出大纲再逐段填充，将之前五天的实训日志内容整合提炼到报告中，代码部分直接截取项目中的关键代码段并添加注释说明。
+
+明日计划：实训结束，准备提交实训日志文档和项目报告，整理所有成果物（项目源码、数据库脚本、实训日志、项目报告）打包提交给指导教师。
+
+
+【建议截图】
+1. logout.aspx.cs 代码截图（Session 清除逻辑）
+2. 数据库 E-R 图截图
+3. IIS 部署配置截图（应用程序池设置）
+4. 项目最终文件夹结构截图
+5. 测试用例执行结果表格截图
+
+========================================
+（全文完）
+========================================
